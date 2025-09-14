@@ -10,19 +10,18 @@ openai
 langchain-anthropic
 anthropic
 
-# HuggingFace Integration
-langchain-huggingface
-transformers
-huggingface-hub
-
-# Google Gemini (PaLM) Integration
+# Google Gemini Integration
 langchain-google-genai
 google-generativeai
+
+# Hugging Face Integration
+langchain-huggingface
+transformers
+torch
 
 # environment variable management
 python-dotenv
 
-# Machine learning utilities
+# Additional utilities
 numpy
-scikit-learn
 pandas
