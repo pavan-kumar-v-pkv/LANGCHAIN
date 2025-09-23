@@ -1,0 +1,9 @@
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--disable=missing-module-docstring,missing-function-docstring,missing-class-docstring,line-too-long,import-error,no-member"
+    ],
+    "python.defaultInterpreterPath": "./venv/bin/python",
+    "python.formatting.provider": "black"
+}

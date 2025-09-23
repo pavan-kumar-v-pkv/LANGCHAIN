@@ -1,0 +1,20 @@
+[MESSAGES CONTROL]
+# Disable specific warnings that are commonly unwanted
+disable=
+    missing-module-docstring,
+    missing-function-docstring,
+    missing-class-docstring,
+    line-too-long,
+    too-few-public-methods,
+    import-error,
+    no-member,
+    unused-import,
+    invalid-name
+
+[FORMAT]
+# Set maximum line length
+max-line-length=100
+
+[BASIC]
+# Good variable names which should always be accepted
+good-names=i,j,k,ex,Run,_,df,ax,fig
