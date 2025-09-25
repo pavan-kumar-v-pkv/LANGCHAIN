@@ -26,3 +26,8 @@ python-dotenv
 numpy
 scikit-learn
 pandas
+
+# Additional utilities
+email-validator  # for Pydantic email validation
+grandalf  # for LangChain graph visualization
+langchain-groq
