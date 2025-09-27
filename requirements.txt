@@ -34,3 +34,7 @@ grandalf  # for LangChain graph visualization
 langchain-groq
 pypdf
 bs4
+
+# YouTube chatbot RAG dependencies
+youtube-transcript-api  # for fetching YouTube video transcripts
+faiss-cpu  # for vector similarity search
