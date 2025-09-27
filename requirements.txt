@@ -1,6 +1,7 @@
 # LangChain core
 langchain
 langchain-core
+langchain-community
 
 # OpenAI Integration
 langchain-openai
@@ -31,3 +32,5 @@ pandas
 email-validator  # for Pydantic email validation
 grandalf  # for LangChain graph visualization
 langchain-groq
+pypdf
+bs4

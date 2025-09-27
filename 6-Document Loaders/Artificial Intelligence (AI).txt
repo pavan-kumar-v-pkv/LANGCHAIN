@@ -1,0 +1,34 @@
+﻿Artificial Intelligence (AI)
+
+
+Artificial Intelligence, commonly known as AI, refers to the simulation of human intelligence in machines.
+These machines are designed to think, reason, and learn like humans. AI is widely used in various fields,
+such as healthcare, finance, education, robotics, and entertainment.
+
+
+Key Areas of AI:
+1. Machine Learning (ML) – A subset of AI that enables systems to learn from data and improve performance
+   without explicit programming.
+2. Natural Language Processing (NLP) – Allows machines to understand, interpret, and respond to human language.
+3. Computer Vision – Enables machines to analyze and interpret visual information from the world.
+4. Robotics – Combines AI with physical machines to perform tasks autonomously.
+5. Expert Systems – AI programs that mimic the decision-making ability of human experts.
+
+
+Advantages of AI:
+- Automation of repetitive tasks
+- Increased efficiency and accuracy
+- Improved decision-making
+- Personalized experiences in apps and services
+
+
+Challenges of AI:
+- Ethical concerns (e.g., bias in algorithms)
+- Job displacement due to automation
+- Data privacy issues
+- High computational cost
+
+
+Conclusion:
+AI continues to grow rapidly and has the potential to transform the way humans live and work.
+However, it is important to balance innovation with ethical considerations to ensure AI benefits society as a whole.

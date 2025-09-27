@@ -1,0 +1,565 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "collapsed": true,
+        "id": "5UNwk08n9QOf",
+        "outputId": "9060ffb4-1aa2-47af-c2ac-66617237fbfc"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: langchain in /usr/local/lib/python3.12/dist-packages (0.3.27)\n",
+            "Collecting chromadb\n",
+            "  Downloading chromadb-1.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.2 kB)\n",
+            "Requirement already satisfied: openai in /usr/local/lib/python3.12/dist-packages (1.108.0)\n",
+            "Requirement already satisfied: tiktoken in /usr/local/lib/python3.12/dist-packages (0.11.0)\n",
+            "Collecting pypdf\n",
+            "  Downloading pypdf-6.1.0-py3-none-any.whl.metadata (7.1 kB)\n",
+            "Collecting langchain_openai\n",
+            "  Downloading langchain_openai-0.3.33-py3-none-any.whl.metadata (2.4 kB)\n",
+            "Collecting langchain-community\n",
+            "  Downloading langchain_community-0.3.30-py3-none-any.whl.metadata (3.0 kB)\n",
+            "Requirement already satisfied: langchain-core<1.0.0,>=0.3.72 in /usr/local/lib/python3.12/dist-packages (from langchain) (0.3.76)\n",
+            "Requirement already satisfied: langchain-text-splitters<1.0.0,>=0.3.9 in /usr/local/lib/python3.12/dist-packages (from langchain) (0.3.11)\n",
+            "Requirement already satisfied: langsmith>=0.1.17 in /usr/local/lib/python3.12/dist-packages (from langchain) (0.4.28)\n",
+            "Requirement already satisfied: pydantic<3.0.0,>=2.7.4 in /usr/local/lib/python3.12/dist-packages (from langchain) (2.11.9)\n",
+            "Requirement already satisfied: SQLAlchemy<3,>=1.4 in /usr/local/lib/python3.12/dist-packages (from langchain) (2.0.43)\n",
+            "Requirement already satisfied: requests<3,>=2 in /usr/local/lib/python3.12/dist-packages (from langchain) (2.32.4)\n",
+            "Requirement already satisfied: PyYAML>=5.3 in /usr/local/lib/python3.12/dist-packages (from langchain) (6.0.2)\n",
+            "Requirement already satisfied: build>=1.0.3 in /usr/local/lib/python3.12/dist-packages (from chromadb) (1.3.0)\n",
+            "Collecting pybase64>=1.4.1 (from chromadb)\n",
+            "\u001b[33m  WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))': /packages/ee/87/d9baf98cbfc37b8657290ad4421f3a3c36aa0eafe4872c5859cfb52f3448/pybase64-1.4.2-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata\u001b[0m\u001b[33m\n",
+            "\u001b[0m  Downloading pybase64-1.4.2-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (8.7 kB)\n",
+            "Requirement already satisfied: uvicorn>=0.18.3 in /usr/local/lib/python3.12/dist-packages (from uvicorn[standard]>=0.18.3->chromadb) (0.35.0)\n",
+            "Requirement already satisfied: numpy>=1.22.5 in /usr/local/lib/python3.12/dist-packages (from chromadb) (2.0.2)\n",
+            "Collecting posthog<6.0.0,>=2.4.0 (from chromadb)\n",
+            "  Downloading posthog-5.4.0-py3-none-any.whl.metadata (5.7 kB)\n",
+            "Requirement already satisfied: typing-extensions>=4.5.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (4.15.0)\n",
+            "Collecting onnxruntime>=1.14.1 (from chromadb)\n",
+            "  Downloading onnxruntime-1.23.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.9 kB)\n",
+            "Requirement already satisfied: opentelemetry-api>=1.2.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (1.37.0)\n",
+            "Collecting opentelemetry-exporter-otlp-proto-grpc>=1.2.0 (from chromadb)\n",
+            "  Downloading opentelemetry_exporter_otlp_proto_grpc-1.37.0-py3-none-any.whl.metadata (2.4 kB)\n",
+            "Requirement already satisfied: opentelemetry-sdk>=1.2.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (1.37.0)\n",
+            "Requirement already satisfied: tokenizers>=0.13.2 in /usr/local/lib/python3.12/dist-packages (from chromadb) (0.22.0)\n",
+            "Collecting pypika>=0.48.9 (from chromadb)\n",
+            "  Downloading PyPika-0.48.9.tar.gz (67 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m67.3/67.3 kB\u001b[0m \u001b[31m4.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h  Installing build dependencies ... \u001b[?25l\u001b[?25hdone\n",
+            "  Getting requirements to build wheel ... \u001b[?25l\u001b[?25hdone\n",
+            "  Preparing metadata (pyproject.toml) ... \u001b[?25l\u001b[?25hdone\n",
+            "Requirement already satisfied: tqdm>=4.65.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (4.67.1)\n",
+            "Requirement already satisfied: overrides>=7.3.1 in /usr/local/lib/python3.12/dist-packages (from chromadb) (7.7.0)\n",
+            "Requirement already satisfied: importlib-resources in /usr/local/lib/python3.12/dist-packages (from chromadb) (6.5.2)\n",
+            "Requirement already satisfied: grpcio>=1.58.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (1.75.0)\n",
+            "Collecting bcrypt>=4.0.1 (from chromadb)\n",
+            "  Downloading bcrypt-5.0.0-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (10 kB)\n",
+            "Requirement already satisfied: typer>=0.9.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (0.17.4)\n",
+            "Collecting kubernetes>=28.1.0 (from chromadb)\n",
+            "  Downloading kubernetes-33.1.0-py2.py3-none-any.whl.metadata (1.7 kB)\n",
+            "Requirement already satisfied: tenacity>=8.2.3 in /usr/local/lib/python3.12/dist-packages (from chromadb) (8.5.0)\n",
+            "Collecting mmh3>=4.0.1 (from chromadb)\n",
+            "  Downloading mmh3-5.2.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (14 kB)\n",
+            "Requirement already satisfied: orjson>=3.9.12 in /usr/local/lib/python3.12/dist-packages (from chromadb) (3.11.3)\n",
+            "Requirement already satisfied: httpx>=0.27.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (0.28.1)\n",
+            "Requirement already satisfied: rich>=10.11.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (13.9.4)\n",
+            "Requirement already satisfied: jsonschema>=4.19.0 in /usr/local/lib/python3.12/dist-packages (from chromadb) (4.25.1)\n",
+            "Requirement already satisfied: anyio<5,>=3.5.0 in /usr/local/lib/python3.12/dist-packages (from openai) (4.10.0)\n",
+            "Requirement already satisfied: distro<2,>=1.7.0 in /usr/local/lib/python3.12/dist-packages (from openai) (1.9.0)\n",
+            "Requirement already satisfied: jiter<1,>=0.4.0 in /usr/local/lib/python3.12/dist-packages (from openai) (0.11.0)\n",
+            "Requirement already satisfied: sniffio in /usr/local/lib/python3.12/dist-packages (from openai) (1.3.1)\n",
+            "Requirement already satisfied: regex>=2022.1.18 in /usr/local/lib/python3.12/dist-packages (from tiktoken) (2024.11.6)\n",
+            "Collecting requests<3,>=2 (from langchain)\n",
+            "  Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)\n",
+            "Requirement already satisfied: aiohttp<4.0.0,>=3.8.3 in /usr/local/lib/python3.12/dist-packages (from langchain-community) (3.12.15)\n",
+            "Collecting dataclasses-json<0.7.0,>=0.6.7 (from langchain-community)\n",
+            "  Downloading dataclasses_json-0.6.7-py3-none-any.whl.metadata (25 kB)\n",
+            "Requirement already satisfied: pydantic-settings<3.0.0,>=2.10.1 in /usr/local/lib/python3.12/dist-packages (from langchain-community) (2.10.1)\n",
+            "Requirement already satisfied: httpx-sse<1.0.0,>=0.4.0 in /usr/local/lib/python3.12/dist-packages (from langchain-community) (0.4.1)\n",
+            "Requirement already satisfied: aiohappyeyeballs>=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (2.6.1)\n",
+            "Requirement already satisfied: aiosignal>=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (1.4.0)\n",
+            "Requirement already satisfied: attrs>=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (25.3.0)\n",
+            "Requirement already satisfied: frozenlist>=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (1.7.0)\n",
+            "Requirement already satisfied: multidict<7.0,>=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (6.6.4)\n",
+            "Requirement already satisfied: propcache>=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (0.3.2)\n",
+            "Requirement already satisfied: yarl<2.0,>=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (1.20.1)\n",
+            "Requirement already satisfied: idna>=2.8 in /usr/local/lib/python3.12/dist-packages (from anyio<5,>=3.5.0->openai) (3.10)\n",
+            "Requirement already satisfied: packaging>=19.1 in /usr/local/lib/python3.12/dist-packages (from build>=1.0.3->chromadb) (25.0)\n",
+            "Requirement already satisfied: pyproject_hooks in /usr/local/lib/python3.12/dist-packages (from build>=1.0.3->chromadb) (1.2.0)\n",
+            "Collecting marshmallow<4.0.0,>=3.18.0 (from dataclasses-json<0.7.0,>=0.6.7->langchain-community)\n",
+            "  Downloading marshmallow-3.26.1-py3-none-any.whl.metadata (7.3 kB)\n",
+            "Collecting typing-inspect<1,>=0.4.0 (from dataclasses-json<0.7.0,>=0.6.7->langchain-community)\n",
+            "  Downloading typing_inspect-0.9.0-py3-none-any.whl.metadata (1.5 kB)\n",
+            "Requirement already satisfied: certifi in /usr/local/lib/python3.12/dist-packages (from httpx>=0.27.0->chromadb) (2025.8.3)\n",
+            "Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.12/dist-packages (from httpx>=0.27.0->chromadb) (1.0.9)\n",
+            "Requirement already satisfied: h11>=0.16 in /usr/local/lib/python3.12/dist-packages (from httpcore==1.*->httpx>=0.27.0->chromadb) (0.16.0)\n",
+            "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.19.0->chromadb) (2025.9.1)\n",
+            "Requirement already satisfied: referencing>=0.28.4 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.19.0->chromadb) (0.36.2)\n",
+            "Requirement already satisfied: rpds-py>=0.7.1 in /usr/local/lib/python3.12/dist-packages (from jsonschema>=4.19.0->chromadb) (0.27.1)\n",
+            "Requirement already satisfied: six>=1.9.0 in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (1.17.0)\n",
+            "Requirement already satisfied: python-dateutil>=2.5.3 in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (2.9.0.post0)\n",
+            "Requirement already satisfied: google-auth>=1.0.1 in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (2.38.0)\n",
+            "Requirement already satisfied: websocket-client!=0.40.0,!=0.41.*,!=0.42.*,>=0.32.0 in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (1.8.0)\n",
+            "Requirement already satisfied: requests-oauthlib in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (2.0.0)\n",
+            "Requirement already satisfied: oauthlib>=3.2.2 in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (3.3.1)\n",
+            "Requirement already satisfied: urllib3>=1.24.2 in /usr/local/lib/python3.12/dist-packages (from kubernetes>=28.1.0->chromadb) (2.5.0)\n",
+            "Collecting durationpy>=0.7 (from kubernetes>=28.1.0->chromadb)\n",
+            "  Downloading durationpy-0.10-py3-none-any.whl.metadata (340 bytes)\n",
+            "Requirement already satisfied: jsonpatch<2.0,>=1.33 in /usr/local/lib/python3.12/dist-packages (from langchain-core<1.0.0,>=0.3.72->langchain) (1.33)\n",
+            "Requirement already satisfied: requests-toolbelt>=1.0.0 in /usr/local/lib/python3.12/dist-packages (from langsmith>=0.1.17->langchain) (1.0.0)\n",
+            "Requirement already satisfied: zstandard>=0.23.0 in /usr/local/lib/python3.12/dist-packages (from langsmith>=0.1.17->langchain) (0.25.0)\n",
+            "Collecting coloredlogs (from onnxruntime>=1.14.1->chromadb)\n",
+            "  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)\n",
+            "Requirement already satisfied: flatbuffers in /usr/local/lib/python3.12/dist-packages (from onnxruntime>=1.14.1->chromadb) (25.2.10)\n",
+            "Requirement already satisfied: protobuf in /usr/local/lib/python3.12/dist-packages (from onnxruntime>=1.14.1->chromadb) (5.29.5)\n",
+            "Requirement already satisfied: sympy in /usr/local/lib/python3.12/dist-packages (from onnxruntime>=1.14.1->chromadb) (1.13.3)\n",
+            "Requirement already satisfied: importlib-metadata<8.8.0,>=6.0 in /usr/local/lib/python3.12/dist-packages (from opentelemetry-api>=1.2.0->chromadb) (8.7.0)\n",
+            "Requirement already satisfied: googleapis-common-protos~=1.57 in /usr/local/lib/python3.12/dist-packages (from opentelemetry-exporter-otlp-proto-grpc>=1.2.0->chromadb) (1.70.0)\n",
+            "Collecting opentelemetry-exporter-otlp-proto-common==1.37.0 (from opentelemetry-exporter-otlp-proto-grpc>=1.2.0->chromadb)\n",
+            "  Downloading opentelemetry_exporter_otlp_proto_common-1.37.0-py3-none-any.whl.metadata (1.8 kB)\n",
+            "Collecting opentelemetry-proto==1.37.0 (from opentelemetry-exporter-otlp-proto-grpc>=1.2.0->chromadb)\n",
+            "  Downloading opentelemetry_proto-1.37.0-py3-none-any.whl.metadata (2.3 kB)\n",
+            "Requirement already satisfied: opentelemetry-semantic-conventions==0.58b0 in /usr/local/lib/python3.12/dist-packages (from opentelemetry-sdk>=1.2.0->chromadb) (0.58b0)\n",
+            "Collecting backoff>=1.10.0 (from posthog<6.0.0,>=2.4.0->chromadb)\n",
+            "  Downloading backoff-2.2.1-py3-none-any.whl.metadata (14 kB)\n",
+            "Requirement already satisfied: annotated-types>=0.6.0 in /usr/local/lib/python3.12/dist-packages (from pydantic<3.0.0,>=2.7.4->langchain) (0.7.0)\n",
+            "Requirement already satisfied: pydantic-core==2.33.2 in /usr/local/lib/python3.12/dist-packages (from pydantic<3.0.0,>=2.7.4->langchain) (2.33.2)\n",
+            "Requirement already satisfied: typing-inspection>=0.4.0 in /usr/local/lib/python3.12/dist-packages (from pydantic<3.0.0,>=2.7.4->langchain) (0.4.1)\n",
+            "Requirement already satisfied: python-dotenv>=0.21.0 in /usr/local/lib/python3.12/dist-packages (from pydantic-settings<3.0.0,>=2.10.1->langchain-community) (1.1.1)\n",
+            "Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.12/dist-packages (from requests<3,>=2->langchain) (3.4.3)\n",
+            "Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.12/dist-packages (from rich>=10.11.0->chromadb) (4.0.0)\n",
+            "Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.12/dist-packages (from rich>=10.11.0->chromadb) (2.19.2)\n",
+            "Requirement already satisfied: greenlet>=1 in /usr/local/lib/python3.12/dist-packages (from SQLAlchemy<3,>=1.4->langchain) (3.2.4)\n",
+            "Requirement already satisfied: huggingface-hub<1.0,>=0.16.4 in /usr/local/lib/python3.12/dist-packages (from tokenizers>=0.13.2->chromadb) (0.35.0)\n",
+            "Requirement already satisfied: click>=8.0.0 in /usr/local/lib/python3.12/dist-packages (from typer>=0.9.0->chromadb) (8.2.1)\n",
+            "Requirement already satisfied: shellingham>=1.3.0 in /usr/local/lib/python3.12/dist-packages (from typer>=0.9.0->chromadb) (1.5.4)\n",
+            "Collecting httptools>=0.6.3 (from uvicorn[standard]>=0.18.3->chromadb)\n",
+            "  Downloading httptools-0.6.4-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.6 kB)\n",
+            "Collecting uvloop>=0.15.1 (from uvicorn[standard]>=0.18.3->chromadb)\n",
+            "  Downloading uvloop-0.21.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)\n",
+            "Collecting watchfiles>=0.13 (from uvicorn[standard]>=0.18.3->chromadb)\n",
+            "  Downloading watchfiles-1.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)\n",
+            "Requirement already satisfied: websockets>=10.4 in /usr/local/lib/python3.12/dist-packages (from uvicorn[standard]>=0.18.3->chromadb) (15.0.1)\n",
+            "Requirement already satisfied: cachetools<6.0,>=2.0.0 in /usr/local/lib/python3.12/dist-packages (from google-auth>=1.0.1->kubernetes>=28.1.0->chromadb) (5.5.2)\n",
+            "Requirement already satisfied: pyasn1-modules>=0.2.1 in /usr/local/lib/python3.12/dist-packages (from google-auth>=1.0.1->kubernetes>=28.1.0->chromadb) (0.4.2)\n",
+            "Requirement already satisfied: rsa<5,>=3.1.4 in /usr/local/lib/python3.12/dist-packages (from google-auth>=1.0.1->kubernetes>=28.1.0->chromadb) (4.9.1)\n",
+            "Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers>=0.13.2->chromadb) (3.19.1)\n",
+            "Requirement already satisfied: fsspec>=2023.5.0 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers>=0.13.2->chromadb) (2025.3.0)\n",
+            "Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /usr/local/lib/python3.12/dist-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers>=0.13.2->chromadb) (1.1.10)\n",
+            "Requirement already satisfied: zipp>=3.20 in /usr/local/lib/python3.12/dist-packages (from importlib-metadata<8.8.0,>=6.0->opentelemetry-api>=1.2.0->chromadb) (3.23.0)\n",
+            "Requirement already satisfied: jsonpointer>=1.9 in /usr/local/lib/python3.12/dist-packages (from jsonpatch<2.0,>=1.33->langchain-core<1.0.0,>=0.3.72->langchain) (3.0.0)\n",
+            "Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.12/dist-packages (from markdown-it-py>=2.2.0->rich>=10.11.0->chromadb) (0.1.2)\n",
+            "Collecting mypy-extensions>=0.3.0 (from typing-inspect<1,>=0.4.0->dataclasses-json<0.7.0,>=0.6.7->langchain-community)\n",
+            "  Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)\n",
+            "Collecting humanfriendly>=9.1 (from coloredlogs->onnxruntime>=1.14.1->chromadb)\n",
+            "  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)\n",
+            "Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy->onnxruntime>=1.14.1->chromadb) (1.3.0)\n",
+            "Requirement already satisfied: pyasn1<0.7.0,>=0.6.1 in /usr/local/lib/python3.12/dist-packages (from pyasn1-modules>=0.2.1->google-auth>=1.0.1->kubernetes>=28.1.0->chromadb) (0.6.1)\n",
+            "Downloading chromadb-1.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (19.8 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m19.8/19.8 MB\u001b[0m \u001b[31m83.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading pypdf-6.1.0-py3-none-any.whl (322 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m322.5/322.5 kB\u001b[0m \u001b[31m21.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading langchain_openai-0.3.33-py3-none-any.whl (74 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m75.0/75.0 kB\u001b[0m \u001b[31m5.4 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading langchain_community-0.3.30-py3-none-any.whl (2.5 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m2.5/2.5 MB\u001b[0m \u001b[31m76.4 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading bcrypt-5.0.0-cp39-abi3-manylinux_2_34_x86_64.whl (278 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m278.2/278.2 kB\u001b[0m \u001b[31m17.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading dataclasses_json-0.6.7-py3-none-any.whl (28 kB)\n",
+            "Downloading kubernetes-33.1.0-py2.py3-none-any.whl (1.9 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.9/1.9 MB\u001b[0m \u001b[31m69.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading mmh3-5.2.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (103 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m103.3/103.3 kB\u001b[0m \u001b[31m7.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading onnxruntime-1.23.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (17.3 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m17.3/17.3 MB\u001b[0m \u001b[31m85.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading opentelemetry_exporter_otlp_proto_grpc-1.37.0-py3-none-any.whl (19 kB)\n",
+            "Downloading opentelemetry_exporter_otlp_proto_common-1.37.0-py3-none-any.whl (18 kB)\n",
+            "Downloading opentelemetry_proto-1.37.0-py3-none-any.whl (72 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m72.5/72.5 kB\u001b[0m \u001b[31m4.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading posthog-5.4.0-py3-none-any.whl (105 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m105.4/105.4 kB\u001b[0m \u001b[31m7.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading pybase64-1.4.2-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (71 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m71.6/71.6 kB\u001b[0m \u001b[31m4.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading requests-2.32.5-py3-none-any.whl (64 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m64.7/64.7 kB\u001b[0m \u001b[31m3.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading backoff-2.2.1-py3-none-any.whl (15 kB)\n",
+            "Downloading durationpy-0.10-py3-none-any.whl (3.9 kB)\n",
+            "Downloading httptools-0.6.4-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (510 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m510.8/510.8 kB\u001b[0m \u001b[31m33.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading marshmallow-3.26.1-py3-none-any.whl (50 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m50.9/50.9 kB\u001b[0m \u001b[31m3.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading typing_inspect-0.9.0-py3-none-any.whl (8.8 kB)\n",
+            "Downloading uvloop-0.21.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.7 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m4.7/4.7 MB\u001b[0m \u001b[31m92.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading watchfiles-1.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (452 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m452.2/452.2 kB\u001b[0m \u001b[31m31.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m46.0/46.0 kB\u001b[0m \u001b[31m3.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m86.8/86.8 kB\u001b[0m \u001b[31m5.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)\n",
+            "Building wheels for collected packages: pypika\n",
+            "  Building wheel for pypika (pyproject.toml) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for pypika: filename=pypika-0.48.9-py2.py3-none-any.whl size=53803 sha256=4ea084b82055c288a7da27654d5f53bc9e1e51de4f58a3c13f6818ef2407c5db\n",
+            "  Stored in directory: /root/.cache/pip/wheels/d5/3d/69/8d68d249cd3de2584f226e27fd431d6344f7d70fd856ebd01b\n",
+            "Successfully built pypika\n",
+            "Installing collected packages: pypika, durationpy, uvloop, requests, pypdf, pybase64, opentelemetry-proto, mypy-extensions, mmh3, marshmallow, humanfriendly, httptools, bcrypt, backoff, watchfiles, typing-inspect, posthog, opentelemetry-exporter-otlp-proto-common, coloredlogs, onnxruntime, kubernetes, dataclasses-json, opentelemetry-exporter-otlp-proto-grpc, langchain_openai, chromadb, langchain-community\n",
+            "  Attempting uninstall: requests\n",
+            "    Found existing installation: requests 2.32.4\n",
+            "    Uninstalling requests-2.32.4:\n",
+            "      Successfully uninstalled requests-2.32.4\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "google-colab 1.0.0 requires requests==2.32.4, but you have requests 2.32.5 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed backoff-2.2.1 bcrypt-5.0.0 chromadb-1.1.0 coloredlogs-15.0.1 dataclasses-json-0.6.7 durationpy-0.10 httptools-0.6.4 humanfriendly-10.0 kubernetes-33.1.0 langchain-community-0.3.30 langchain_openai-0.3.33 marshmallow-3.26.1 mmh3-5.2.0 mypy-extensions-1.1.0 onnxruntime-1.23.0 opentelemetry-exporter-otlp-proto-common-1.37.0 opentelemetry-exporter-otlp-proto-grpc-1.37.0 opentelemetry-proto-1.37.0 posthog-5.4.0 pybase64-1.4.2 pypdf-6.1.0 pypika-0.48.9 requests-2.32.5 typing-inspect-0.9.0 uvloop-0.21.0 watchfiles-1.1.0\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install langchain chromadb openai tiktoken pypdf langchain_openai langchain-community"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Used to securely store your API key\n",
+        "from google.colab import userdata\n",
+        "\n",
+        "import os\n",
+        "\n",
+        "os.environ[\"OPENAI_API_KEY\"] = userdata.get(\"OPENAI_API_KEY\")"
+      ],
+      "metadata": {
+        "id": "DWbaq37x_eHq"
+      },
+      "execution_count": 6,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from langchain_openai import OpenAIEmbeddings\n",
+        "from langchain.vectorstores import Chroma"
+      ],
+      "metadata": {
+        "id": "9aLnBZys9gfR"
+      },
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from langchain.schema import Document\n",
+        "\n",
+        "doc1 = Document(\n",
+        "    page_content=\"Virat Kohli is one of the greatest batsmen in cricket history. \"\n",
+        "                 \"He has scored more than 25,000 international runs and captained \"\n",
+        "                 \"Royal Challengers Bangalore in the IPL for several seasons.\",\n",
+        "    metadata={'team': 'Royal Challengers Bangalore'}\n",
+        ")\n",
+        "\n",
+        "doc2 = Document(\n",
+        "    page_content=\"MS Dhoni is known for his calm captaincy and finishing ability. \"\n",
+        "                 \"He has led Chennai Super Kings to multiple IPL titles.\",\n",
+        "    metadata={'team': 'Chennai Super Kings'}\n",
+        ")\n",
+        "\n",
+        "doc3 = Document(\n",
+        "    page_content=\"Rohit Sharma, nicknamed 'Hitman', is famous for his ability to \"\n",
+        "                 \"score double centuries in ODIs and for captaining Mumbai Indians.\",\n",
+        "    metadata={'team': 'Mumbai Indians'}\n",
+        ")\n",
+        "\n",
+        "doc4 = Document(\n",
+        "    page_content=\"AB de Villiers, also known as Mr. 360, is admired for his \"\n",
+        "                 \"unorthodox shots and explosive batting style.\",\n",
+        "    metadata={'team': 'Royal Challengers Bangalore'}\n",
+        ")\n",
+        "\n",
+        "doc5 = Document(\n",
+        "    page_content=\"Rashid Khan is one of the top T20 bowlers in the world, \"\n",
+        "                 \"feared for his leg-spin and variations in the IPL.\",\n",
+        "    metadata={'team': 'Gujarat Titans'}\n",
+        ")"
+      ],
+      "metadata": {
+        "id": "jRPeSHqm9zRa"
+      },
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "docs = [doc1, doc2, doc3, doc4, doc5]"
+      ],
+      "metadata": {
+        "id": "ji6-GE3e-xFa"
+      },
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "vector_store = Chroma(\n",
+        "    embedding_function=OpenAIEmbeddings(),\n",
+        "    persist_directory=\"chroma_db\",\n",
+        "    collection_name=\"my_collection\"\n",
+        ")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "CFrEYrMH-zm1",
+        "outputId": "a9c9952b-ec09-4ec1-d501-f0696d429da4"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/tmp/ipython-input-3776924671.py:1: LangChainDeprecationWarning: The class `Chroma` was deprecated in LangChain 0.2.9 and will be removed in 1.0. An updated version of the class exists in the :class:`~langchain-chroma package and should be used instead. To use it run `pip install -U :class:`~langchain-chroma` and import as `from :class:`~langchain_chroma import Chroma``.\n",
+            "  vector_store = Chroma(\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "docs"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "hUaLvBPD_AOf",
+        "outputId": "c7f26d64-9ac6-4056-d546-ae603b529efe"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "[Document(metadata={'team': 'Royal Challengers Bangalore'}, page_content='Virat Kohli is one of the greatest batsmen in cricket history. He has scored more than 25,000 international runs and captained Royal Challengers Bangalore in the IPL for several seasons.'),\n",
+              " Document(metadata={'team': 'Chennai Super Kings'}, page_content='MS Dhoni is known for his calm captaincy and finishing ability. He has led Chennai Super Kings to multiple IPL titles.'),\n",
+              " Document(metadata={'team': 'Mumbai Indians'}, page_content=\"Rohit Sharma, nicknamed 'Hitman', is famous for his ability to score double centuries in ODIs and for captaining Mumbai Indians.\"),\n",
+              " Document(metadata={'team': 'Royal Challengers Bangalore'}, page_content='AB de Villiers, also known as Mr. 360, is admired for his unorthodox shots and explosive batting style.'),\n",
+              " Document(metadata={'team': 'Gujarat Titans'}, page_content='Rashid Khan is one of the top T20 bowlers in the world, feared for his leg-spin and variations in the IPL.')]"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# add documents\n",
+        "vector_store.add_documents(docs)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Ux8cbwpz_38B",
+        "outputId": "b966e13c-1cbf-454d-e64b-81af97cdb48d"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "['d21f38b2-d08f-47d1-be22-875b58fcb658',\n",
+              " '43f4cea3-885b-453f-b77b-922ef6cab9b9',\n",
+              " '8856cb65-07ab-4f00-a7ef-3e13c152bded',\n",
+              " 'e3264e85-9c58-4c6e-bfe7-5a6d2f12f574',\n",
+              " '05baff0e-e8c3-4d16-81b1-64016ca80687']"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 9
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# view documents\n",
+        "vector_store.get(include=['embeddings', 'documents', 'metadatas'])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "fsUs43pV_-zN",
+        "outputId": "018c7749-c9c8-4a22-8e15-b3feee56e860"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "{'ids': ['d21f38b2-d08f-47d1-be22-875b58fcb658',\n",
+              "  '43f4cea3-885b-453f-b77b-922ef6cab9b9',\n",
+              "  '8856cb65-07ab-4f00-a7ef-3e13c152bded',\n",
+              "  'e3264e85-9c58-4c6e-bfe7-5a6d2f12f574',\n",
+              "  '05baff0e-e8c3-4d16-81b1-64016ca80687'],\n",
+              " 'embeddings': array([[-0.0065006 , -0.00929543,  0.02696914, ..., -0.01507099,\n",
+              "         -0.00479954,  0.00959288],\n",
+              "        [ 0.00778978,  0.00231461,  0.00906435, ..., -0.03071915,\n",
+              "          0.00369432, -0.00407928],\n",
+              "        [-0.02245789,  0.00536337,  0.00697946, ..., -0.01949612,\n",
+              "          0.00875008, -0.01511787],\n",
+              "        [-0.02187739, -0.00310758, -0.00189642, ..., -0.02692603,\n",
+              "         -0.00155539,  0.01132754],\n",
+              "        [-0.00568425,  0.01161151,  0.02845082, ..., -0.0131943 ,\n",
+              "          0.00917493, -0.00208193]]),\n",
+              " 'documents': ['Virat Kohli is one of the greatest batsmen in cricket history. He has scored more than 25,000 international runs and captained Royal Challengers Bangalore in the IPL for several seasons.',\n",
+              "  'MS Dhoni is known for his calm captaincy and finishing ability. He has led Chennai Super Kings to multiple IPL titles.',\n",
+              "  \"Rohit Sharma, nicknamed 'Hitman', is famous for his ability to score double centuries in ODIs and for captaining Mumbai Indians.\",\n",
+              "  'AB de Villiers, also known as Mr. 360, is admired for his unorthodox shots and explosive batting style.',\n",
+              "  'Rashid Khan is one of the top T20 bowlers in the world, feared for his leg-spin and variations in the IPL.'],\n",
+              " 'uris': None,\n",
+              " 'included': ['embeddings', 'documents', 'metadatas'],\n",
+              " 'data': None,\n",
+              " 'metadatas': [{'team': 'Royal Challengers Bangalore'},\n",
+              "  {'team': 'Chennai Super Kings'},\n",
+              "  {'team': 'Mumbai Indians'},\n",
+              "  {'team': 'Royal Challengers Bangalore'},\n",
+              "  {'team': 'Gujarat Titans'}]}"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# search documents\n",
+        "vector_store.similarity_search(\"Batsman\", k=2)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8yj_wkWIAI9I",
+        "outputId": "84116b04-503c-477d-b019-ea502fed519a"
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "[Document(metadata={'team': 'Royal Challengers Bangalore'}, page_content='AB de Villiers, also known as Mr. 360, is admired for his unorthodox shots and explosive batting style.'),\n",
+              " Document(metadata={'team': 'Mumbai Indians'}, page_content=\"Rohit Sharma, nicknamed 'Hitman', is famous for his ability to score double centuries in ODIs and for captaining Mumbai Indians.\")]"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 11
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# search with similarity score\n",
+        "vector_store.similarity_search_with_score(\"Batsman\", k=2)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Vdy50b1RAYeL",
+        "outputId": "502023f5-d0ed-40be-ceed-79d29fc7f10c"
+      },
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "[(Document(metadata={'team': 'Royal Challengers Bangalore'}, page_content='AB de Villiers, also known as Mr. 360, is admired for his unorthodox shots and explosive batting style.'),\n",
+              "  0.3107920289039612),\n",
+              " (Document(metadata={'team': 'Mumbai Indians'}, page_content=\"Rohit Sharma, nicknamed 'Hitman', is famous for his ability to score double centuries in ODIs and for captaining Mumbai Indians.\"),\n",
+              "  0.3134373426437378)]"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 12
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# meta-data filtering\n",
+        "vector_store.similarity_search_with_score(\"\", filter={\"team\": \"Royal Challengers Bangalore\"})"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "TauhMP2xApmz",
+        "outputId": "c1084ca6-5b98-45f7-ceec-f8929c25c35c"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "[(Document(metadata={'team': 'Royal Challengers Bangalore'}, page_content='AB de Villiers, also known as Mr. 360, is admired for his unorthodox shots and explosive batting style.'),\n",
+              "  0.6359187960624695),\n",
+              " (Document(metadata={'team': 'Royal Challengers Bangalore'}, page_content='Virat Kohli is one of the greatest batsmen in cricket history. He has scored more than 25,000 international runs and captained Royal Challengers Bangalore in the IPL for several seasons.'),\n",
+              "  0.6604252457618713)]"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 14
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "vq70AvWMA2pp"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
